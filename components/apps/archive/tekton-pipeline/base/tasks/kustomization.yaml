@@ -1,0 +1,4 @@
+resources:
+  - task.yaml
+  - curl.yaml
+    

@@ -1,0 +1,48 @@
+
+image:
+  # -- image repository
+  repository: ghcr.io/toboshii/hajimari
+  # -- image pull policy
+  pullPolicy: IfNotPresent
+  # -- image tag
+  tag: v0.3.1 #main-f77fe68
+env:
+  TZ: America/Toronto
+ingress:
+  main:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-issuer
+      hajimari.io/enable: 'false'
+    hosts:
+      - host: home.${CLUSTER_DOMAIN}
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: hajimari-tls-certificate
+        hosts:
+          - home.${CLUSTER_DOMAIN}
+hajimari:
+  defaultEnable: true
+  namespaceSelector:
+    any: true
+  groups:
+    - name: Homelab
+      links:
+        - name: Argo
+          url: https://argocd.${CLUSTER_DOMAIN}
+    - name: Managed services
+      links:
+        - name: Terraform Cloud
+          url: https://app.terraform.io
+        - name: Cloudflare
+          url: https://dash.cloudflare.com
+persistence:
+  data:
+    enabled: true
+    type: pvc
+    accessMode: ReadWriteOnce
+    size: 1Gi
+

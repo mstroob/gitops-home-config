@@ -1,0 +1,13 @@
+resources:
+ 
+  - bitnami.yaml
+  
+  - hajimari.yaml
+
+  - ingress-nginx.yaml
+ 
+  - kubernetes-dashboard.yaml
+  - kubereboot-charts.yaml
+  - nextcloud.yaml
+  - node-feature-discovery-charts.yaml
+  - patch-operator.yaml

@@ -1,0 +1,29 @@
+helmCharts:
+- name: hajimari
+  version: 2.0.2
+  repo: https://hajimari.io
+  valuesFile: values.yaml
+  namespace: hajimari
+  releaseName: hajimari
+
+
+resources:
+  #- ../../../../settings/env-vars/base
+  - ../../../../configs/instance-namespaces/default-namespace
+
+
+patches:
+  - target: 
+      kind: Namespace
+      name: .*
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: hajimari
+  - target: 
+      kind: PersistentVolumeClaim
+      name: hajimari-data
+    patch: |-
+      - op: add
+        path: /spec/storageClassName
+        value: nfs-client

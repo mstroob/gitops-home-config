@@ -1,0 +1,13 @@
+image:
+  repository: quay.io/redhat-cop/patch-operator
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: v0.1.9-linux-arm64
+
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 250Mi
+    
+enableCertManager: true

@@ -1,0 +1,19 @@
+namespace: elasticsearch-worker
+
+resources:
+  #- ../../../../settings/env-vars/base
+  - ../../../../configs/instance-namespaces/default-namespace
+ # - persistent-volume.yaml
+  - elasticsearch.yaml
+  - kibana.yaml
+  - kibana-ingress.yaml
+
+patches:
+  - target: 
+      kind: Namespace
+      name: .*
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: elasticsearch-worker
+    

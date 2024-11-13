@@ -1,0 +1,163 @@
+default:
+  app:
+    enabled: true
+    enableAutoSync: true
+    autoSyncPrune: true
+    project: cluster-config
+    destination:
+      namespace: argocd
+      server: https://kubernetes.default.svc
+    source:
+      repoURL: https://github.com/mstroob/gitops-home-config.git
+      targetRevision: HEAD
+
+applications:
+
+  # load-settings:
+  #   annotations:
+  #     argocd.argoproj.io/sync-wave: '2'
+  #   source:
+  #     path: base/settings/home
+
+  # consume-settings:
+  #   annotations:
+  #     argocd.argoproj.io/sync-wave: '3'
+  #   source:
+  #     path: base/consume-settings
+
+  update-sa:
+    annotations:
+      argocd.argoproj.io/sync-wave: '1'
+    source:
+      path: components/apps/update-sa/base
+
+  cert-manager-operator:
+    annotations:
+      argocd.argoproj.io/sync-wave: "4"
+    destination:
+      namespace: cert-manager
+    source:
+      path: components/apps/cert-manager-operator/base
+ 
+  argocd-ingress:
+    annotations:
+      argocd.argoproj.io/sync-wave: "6"
+    destination:
+      namespace: argocd
+    source:
+      path: components/apps/argocd-ingress/base
+
+  ingress:
+    annotations:
+      argocd.argoproj.io/sync-wave: "6"
+    destination:
+      namespace: ingress-nginx
+    source:
+      path: components/apps/ingress/base
+
+  dashboard:
+    annotations:
+      argocd.argoproj.io/sync-wave: "10"
+    destination:
+      namespace: kubernetes-dashboard
+    source:
+      path: components/apps/dashboard/base
+
+  certificates:
+    annotations:
+      argocd.argoproj.io/sync-wave: "5"
+    destination:
+      namespace: ingress-nginx
+    source:
+      path: components/apps/certificates/base
+  
+  monitoring:
+    annotations:
+      argocd.argoproj.io/sync-wave: "51"
+    destination:
+      namespace: monitoring
+    source:
+      path: components/apps/monitoring/base
+
+  hajimari:
+    annotations:
+      argocd.argoproj.io/sync-wave: "8"
+    destination:
+      namespace: hajimari
+    source:
+      path: components/apps/hajimari/base
+
+  awx:
+    annotations:
+      argocd.argoproj.io/sync-wave: "18"
+    destination:
+      namespace: awx
+    source:
+      path: components/apps/awx/base
+
+  patch-operator:
+    annotations:
+      argocd.argoproj.io/sync-wave: "2"
+    destination:
+      namespace: patch-operator
+    source:
+      path: components/apps/patch-operator/base
+
+  nexus:
+    annotations:
+      argocd.argoproj.io/sync-wave: "7"
+    destination:
+      namespace: nexus
+    source:
+      path: components/apps/nexus/base
+
+  media:
+    annotations:
+      argocd.argoproj.io/sync-wave: '61'
+    source:
+      path: components/apps/media
+
+
+  metallb:
+    annotations:
+      argocd.argoproj.io/sync-wave: '2'
+    source:
+      path: components/apps/metallb/base
+
+
+  nfs-provisioner:
+    annotations:
+      argocd.argoproj.io/sync-wave: '3'
+    source:
+      path: components/apps/nfs-provisioner/base
+
+  elasticsearch-operator:
+    annotations:
+      argocd.argoproj.io/sync-wave: '5'
+    source:
+      path: components/apps/elasticsearch-operator/base
+  
+  elasticsearch-instance:
+    annotations:
+      argocd.argoproj.io/sync-wave: '7'
+    source:
+      path: components/apps/elasticsearch-instance/base
+  
+  fluentd:
+    annotations:
+      argocd.argoproj.io/sync-wave: '17'
+    source:
+      path: components/apps/fluentd/base
+
+  bitwarden:
+    annotations:
+      argocd.argoproj.io/sync-wave: '15'
+    source:
+      path: components/apps/bitwarden/base
+
+  backstage:
+    annotations:
+      argocd.argoproj.io/sync-wave: '15'
+    source:
+      path: components/apps/backstage
+

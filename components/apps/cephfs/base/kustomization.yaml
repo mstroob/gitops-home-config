@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: rook-ceph
+
+
+
+generators:
+  - secret-generator.yaml
+
+# patchesStrategicMerge:
+#   - secret-generator.yaml
+
+
+resources:
+# - common.yaml
+# #- ../../../../settings/env-vars/base
+# # - ../prometheus
+# # - ../kube-state
+# # - ../alertmanager
+# # - ../grafana
+# #- ../loki
+# - ../../../secrets/sendgrid-api-token-file
+# - ../../../../configs/instance-namespaces/default-namespace
+patches:
+  - target: 
+      kind: Namespace
+      name: .*
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: rook-ceph
+

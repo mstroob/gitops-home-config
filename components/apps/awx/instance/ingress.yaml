@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: awx-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-issuer
+    hajimari.io/appName: awx
+    hajimari.io/enable: "true"
+spec:
+  rules:
+  - host: awx.${CLUSTER_DOMAIN}
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: awx-service
+              port:
+                number: 80      
+  tls:
+  - hosts:
+    - awx.${CLUSTER_DOMAIN}
+    secretName: awx-certificate-tls

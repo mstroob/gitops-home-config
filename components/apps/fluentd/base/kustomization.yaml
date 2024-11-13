@@ -1,0 +1,20 @@
+namespace: kube-system
+
+resources:
+  #- ../../../../settings/env-vars/base
+ # - ../../../../configs/instance-namespaces/default-namespace
+  #- release.yaml
+  - deamon-set.yaml
+
+generators:
+  - secret-generator.yaml
+
+# patches:
+#   - target: 
+#       kind: Namespace
+#       name: .*
+#     patch: |-
+#       - op: replace
+#         path: /metadata/name
+#         value: fluentd
+    

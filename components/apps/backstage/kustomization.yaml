@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: backstage
+
+helmCharts:
+- name: backstage
+  repo: https://janus-idp.github.io/helm-backstage
+  valuesFile: values.yaml
+  namespace: backstage
+  releaseName: backstage
+
+
+resources:
+  - ingress.yaml
+  - ../../../configs/instance-namespaces/default-namespace
+
+patches:
+  - target: 
+      kind: StatefulSet
+      name: janus-idp/backstage-postgresql
+    patch: |-
+      - op: add
+        path: /spec/volumeClaimTemplates/0/spec/storageClassName
+        value: nfs-client
+  - target: 
+      kind: Namespace
+      name: .*
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: backstage
+

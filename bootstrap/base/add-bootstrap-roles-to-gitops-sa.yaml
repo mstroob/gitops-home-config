@@ -1,0 +1,52 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: argocd-application-controller-bootstrap-roles
+  namespace: argocd
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - apiGroups:
+      - 'networking.k8s.io'
+      - 'apiregistration.k8s.io'
+      - 'redhatcop.redhat.io'
+      - 'batch'
+      - 'cert-manager.io'
+      - 'argoproj.io'
+      - 'autoscaling'
+      - 'apps'
+      - 'admissionregistration.k8s.io'
+      - 'storage.k8s.io'
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - apiGroups:
+      - '*'
+    resources:
+      - '*'
+    verbs:
+      - 'list'
+      - 'get'
+      - 'watch'
+      - 'update'
+      - 'patch'
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: argocd-application-controller-bootstrap-bindings
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argocd-application-controller-bootstrap-roles
+subjects:
+  - kind: ServiceAccount
+    name: argocd-application-controller
+    namespace: argocd

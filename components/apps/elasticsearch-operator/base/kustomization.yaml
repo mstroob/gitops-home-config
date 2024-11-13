@@ -1,0 +1,15 @@
+resources:
+  #- ../../../../settings/env-vars/base
+  #- ../../../../configs/instance-namespaces/default-namespace
+  - https://download.elastic.co/downloads/eck/2.8.0/crds.yaml
+  - https://download.elastic.co/downloads/eck/2.8.0/operator.yaml
+
+# patches:
+#   - target: 
+#       kind: Namespace
+#       name: .*
+#     patch: |-
+#       - op: replace
+#         path: /metadata/name
+#         value: elastic-system
+    

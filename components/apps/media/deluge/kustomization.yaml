@@ -1,0 +1,47 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+
+helmCharts:
+  - name: deluge
+    version: 5.4.2
+    repo: https://k8s-at-home.com/charts/
+    valuesFile: values.yaml
+    releaseName: deluge
+
+resources:
+- pvc.yaml
+
+
+# patches:
+#   - target: 
+#       kind: Deployment
+#       name: deluge
+#     patch: |-
+#       - op: add
+#         path: /spec/template/spec/containers/0/securityContext
+#         value: 
+#           fsGroup: 1000
+#           fsGroupChangePolicy: OnRootMismatch
+#           runAsGroup: 1000
+#           runAsUser: 1000
+
+# resources:
+#   - release-fs.yaml
+#   - helmrelease.yaml
+
+# apiVersion: helm.toolkit.fluxcd.io/v2beta1
+# kind: HelmRelease
+# metadata:
+#   name: deluge
+# spec:
+#   interval: 5m
+#   chart:
+#     spec:
+#       chart: app-template
+#       version: 1.0.1
+#       interval: 15m
+#       sourceRef:
+#         kind: HelmRepository
+#         name: bjw-s-helm-charts
+#         namespace: argocd

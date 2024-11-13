@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: argocd
+
+resources:
+#- kubernetes-gitops-operator.yaml
+- instance-namespace.yaml
+- https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+#- argocd-redis.yaml
+#- patch-service-account.yaml
+#- patch-operator.yaml
+#- patch-webhook.yaml
+#- patch-operator-kubernetes_gitops_helm_plugins_patch.yaml
+#- privatekey-for-github.yaml
+- add-bootstrap-roles-to-gitops-sa.yaml
+#- argo-cm.yaml
+#- argocd-repo-server.yaml
+
+generators:
+  - secret-generator.yaml
+
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/image
+      value: redis:6.2.4
+  target: 
+    kind: Deployment
+    name: argocd-redis
+
+patchesStrategicMerge:
+- patch-argo-repo-server.yaml
+- patch-argo-cm.yaml

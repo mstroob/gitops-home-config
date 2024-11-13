@@ -1,0 +1,16 @@
+namespace: nexus
+
+resources:
+  #- ../../../../settings/env-vars/base
+  - ../../../../configs/instance-namespaces/default-namespace
+  - nexus.yaml
+  # - ingress.yaml
+
+patches:
+  - target: 
+      kind: Namespace
+      name: .*
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: nexus

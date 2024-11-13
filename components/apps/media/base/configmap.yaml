@@ -1,0 +1,8 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: media-env-config-map
+data:
+  TZ: America/Toronto
+  PUID: "65534"
+  PGID: "65534"

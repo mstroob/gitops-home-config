@@ -1,0 +1,160 @@
+image:
+  repository: ghcr.io/onedr0p/sonarr
+  tag: 3.0.9.1549@sha256:083877c6170419de705ffc89d1739ae9624cb6a17f4204523c3ff4b08960336e
+env:
+  SONARR__INSTANCE_NAME: Sonarr (TV)
+  SONARR__PORT: 8989
+  SONARR__LOG_LEVEL: info
+
+service:
+  main:
+    ports:
+      http:
+        port: 8989
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      hajimari.io/enable: "true"
+      hajimari.io/icon: television-box
+      hajimari.io/info: Series Search
+      hajimari.io/group: media
+      kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: letsencrypt-issuer
+    hosts:
+    - host: "sonarr.${CLUSTER_DOMAIN}"
+      paths:
+      - path: /
+        pathType: Prefix
+    tls:
+    - hosts:
+      - sonarr.${CLUSTER_DOMAIN}
+      secretName: sonarr-certificate-tls
+
+envFrom: 
+ - configMapRef:
+     name: media-env-config-map
+
+securityContext:
+  runAsGroup: 65534
+  runAsUser: 65534
+
+persistence:
+  config:
+    enabled: true
+    existingClaim: sonarr-pvc
+  downloads:
+    enabled: true
+    mountPath: /downloads
+    type: custom
+    volumeSpec:
+      nfs:
+        server: "10.0.4.38"
+        path: "/mnt/nfs_shares/media/downloads"
+  tv:
+    enabled: true
+    mountPath: /tv
+    type: custom
+    volumeSpec:
+      nfs:
+        server: "10.0.4.38"
+        path: "/mnt/nfs_shares/media/complete/tv"
+
+# podSecurityContext:
+#   runAsUser: 1000
+#   runAsGroup: 1000
+#   fsGroup: 1000
+#   fsGroupChangePolicy: "OnRootMismatch"
+
+resources:
+  requests:
+    memory: 250Mi
+    cpu: 500m
+  limits:
+    memory: 1500Mi
+
+addons:
+
+  # -- The common chart supports adding a VPN add-on. It can be configured under this key.
+  # For more info, check out [our docs](http://docs.k8s-at-home.com/our-helm-charts/common-library-add-ons/#wireguard-vpn)
+  # @default -- See values.yaml
+  vpn:
+    # -- Enable running a VPN in the pod to route traffic through a VPN
+    enabled: true
+
+    # -- Specify the VPN type. Valid options are `openvpn`, `wireguard` and `gluetun`.
+    type: openvpn
+
+    # -- OpenVPN specific configuration
+    # @default -- See below
+    openvpn:
+      image:
+        # -- Specify the openvpn client image
+        repository: dperson/openvpn-client
+        # -- Specify the openvpn client image tag
+        tag: latest
+        # -- Specify the openvpn client image pull policy
+        pullPolicy: IfNotPresent
+
+
+      authSecret:  vpn-auth
+
+    # -- Set the VPN container securityContext
+    # @default -- See values.yaml
+    securityContext:
+      capabilities:
+        add:
+          - NET_ADMIN
+          - SYS_MODULE
+    # -- All variables specified here will be added to the vpn sidecar container
+    # See the documentation of the VPN image for all config values
+    envFrom: 
+    - configMapRef:
+        name: media-env-config-map
+    # -- Reference an existing secret that contains the VPN configuration file
+    # The chart expects it to be present under the `vpnConfigfile` key.
+    configFileSecret: vpn-conf
+    # -- Provide custom up/down scripts that can be used by the vpn configuration.
+    # @default -- See values.yaml
+    scripts:
+      # @default -- See below
+      up:  # |-
+        # #!/bin/bash
+        # echo "connected" > /shared/vpnstatus
+      # @default -- See below
+      down:  # |-
+        # #!/bin/bash
+        # ec
+    networkPolicy:
+      # -- If set to true, will deploy a network policy that blocks all outbound
+      # traffic except traffic specified as allowed
+      enabled: true
+
+      # -- Provide additional annotations which may be required.
+      annotations: {}
+
+      # -- Provide additional labels which may be required.
+      labels: {}
+
+      # -- Provide additional podSelector labels which may be required.
+      podSelectorLabels: {}
+
+      # -- The egress configuration for your network policy, All outbound traffic
+      # from the pod will be blocked unless specified here.
+      # [[ref]](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+      # [[recipes]](https://github.com/ahmetb/kubernetes-network-policy-recipes)
+      egress:
+        - to:
+          - ipBlock:
+              cidr: 37.19.211.52/32 
+          # ports:
+          # - port: 1443
+          #   protocol: TCP
+          # - port: 1443
+          #   protocol: UDP
+          # - port: 53
+          #   protocol: TCP
+          # - port: 53
+          #   protocol: UDP
+

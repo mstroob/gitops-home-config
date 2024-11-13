@@ -1,0 +1,41 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: awx-task
+
+# spec:
+#   template:
+#     spec:
+#       containers:
+#         - name: awx-ee
+#           image: 'docker.${CLUSTER_DOMAIN}/awx/awx-ee:latest'
+     
+#       initContainers:
+#         - name: init
+#           image: 'docker.${CLUSTER_DOMAIN}/awx/awx-ee:latest'
+
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: Patch
+metadata:
+  name: awx-task-patch
+spec:
+  serviceAccountRef:
+    name: awx-patch-sa
+  patches:
+    awx-task:
+      targetObjectRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: awx-task
+      patchTemplate: |
+        spec:
+          template:
+            spec:
+              containers:
+                - name: awx-ee
+                  image: 'docker.${CLUSTER_DOMAIN}/awx/awx-ee:latest'
+            
+              initContainers:
+                - name: init
+                  image: 'docker.${CLUSTER_DOMAIN}/awx/awx-ee:latest'
+      patchType: application/merge-patch+json

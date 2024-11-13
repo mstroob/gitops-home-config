@@ -1,0 +1,44 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: argocd-application-controller-extra-roles
+  namespace: argocd
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - secrets
+    verbs:
+      - '*'
+  - apiGroups:
+      - 'cert-manager.io'
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - apiGroups:
+      - 'batch'
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - apiGroups:
+      - ''
+    resources:
+      - 'serviceaccounts'
+    verbs:
+      - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: argocd-application-controller-extra-bindings
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argocd-application-controller-extra-roles
+subjects:
+  - kind: ServiceAccount
+    name: argocd-application-controller
+    namespace: argocd

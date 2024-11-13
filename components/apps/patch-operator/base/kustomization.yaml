@@ -1,0 +1,53 @@
+namespace: patch-operator
+
+
+helmCharts:
+  - name: patch-operator
+    version: v0.1.9
+    namespace: patch-operator
+    includeCRDs: true
+    repo: https://redhat-cop.github.io/patch-operator
+    valuesFile: values.yaml
+    releaseName: patch-operator
+
+resources:
+  - ../../../../configs/instance-namespaces/default-namespace
+  - cluster-role.yaml
+
+patches:
+  - target: 
+      kind: Namespace
+      name: .*
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: patch-operator
+  # - target: 
+  #     kind: Certificate
+  #     name: metrics-serving-cert
+  #   patch: |-
+  #     - op: replace
+  #       path: /spec/dnsNames
+  #       value: |-
+  #         - patch-operator-controller-manager-metrics-service.patch-operator.svc
+  #         - patch-operator-controller-manager-metrics-service.patch-operator.svc.cluster.local
+  # - target: 
+  #     kind: Certificate
+  #     name: serving-cert
+  #   patch: |-
+  #     - op: replace
+  #       path: /spec/dnsNames
+  #       value: |-
+  #         - patch-operator-webhook-service.patch-operator.svc
+  #         - patch-operator-webhook-service.patch-operator.svc.cluster.local  
+
+
+
+
+  # - target: 
+  #     kind: Deployment
+  #     name: patch-operator
+  #   patch: |-
+  #     - op: replace
+  #       path: /spec/template/spec/containers/1/image
+  #       value: quay.io/redhat-cop/patch-operator:v0.1.9-linux-arm64

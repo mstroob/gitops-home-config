@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- grafana-cm.yaml
+- grafana-sa.yaml
+- grafana-deployment.yaml
+- grafana-service.yaml
+- grafana-job.yaml
+- ingress.yaml
+
+generators:
+  - secret-generator.yaml
+

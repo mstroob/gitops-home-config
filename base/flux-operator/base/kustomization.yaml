@@ -1,0 +1,12 @@
+resources:
+- flux-operator.yaml
+- ../../../configs/instance-namespaces/default-namespace
+
+patches:
+  - target: 
+      kind: Namespace
+      name: .*
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: operators

@@ -1,0 +1,23 @@
+
+resources:
+  #- ../../../../settings/env-vars/base
+  #- ../../../../configs/instance-namespaces/default-namespace
+  #- release.yaml
+
+  - "https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml"
+  - "https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml"
+  - "https://storage.googleapis.com/tekton-releases/triggers/latest/interceptors.yaml"
+  - "https://storage.googleapis.com/tekton-releases/dashboard/latest/release.yaml"
+  - dashboard-ingress.yaml
+  #- interceptors.yaml
+  #- ../pipelines
+
+# patches:
+#   - target: 
+#       kind: Namespace
+#       name: .*
+#     patch: |-
+#       - op: replace
+#         path: /metadata/name
+#         value: tekton-pipelines
+    

@@ -1,0 +1,75 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: monitoring
+
+helmCharts:
+- name: kube-prometheus-stack
+  version: 41.7.4
+  repo: https://prometheus-community.github.io/helm-charts
+  valuesFile: values.yaml
+  namespace: monitoring
+  releaseName: monitoring
+
+generators:
+  - secret-generator.yaml
+
+# patchesStrategicMerge:
+#   - secret-generator.yaml
+
+
+resources:
+- https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.66.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
+- https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.66.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
+- https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.66.0/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+- https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.66.0/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
+# - https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.66.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheusagents.yaml
+# - https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.66.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
+- https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.66.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
+- https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.66.0/example/prometheus-operator-crd/monitoring.coreos.com_scrapeconfigs.yaml
+- https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.66.0/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+- https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.66.0/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
+#- ../../../../settings/env-vars/base
+# - ../prometheus
+# - ../kube-state
+# - ../alertmanager
+# - ../grafana
+#- ../loki
+- ../../../secrets/sendgrid-api-token
+- ../../../../configs/instance-namespaces/default-namespace
+patches:
+  - target: 
+      kind: Namespace
+      name: .*
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: monitoring
+  - target: 
+      kind: Deployment
+      name: monitoring-grafana
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/1/env/6/valueFrom/secretKeyRef/name
+        value: monitoring-grafana-overrides
+  - target: 
+      kind: Deployment
+      name: monitoring-grafana
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/1/env/5/valueFrom/secretKeyRef/name
+        value: monitoring-grafana-overrides
+  - target: 
+      kind: Deployment
+      name: monitoring-grafana
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/2/env/0/valueFrom/secretKeyRef/name
+        value: monitoring-grafana-overrides
+  - target: 
+      kind: Deployment
+      name: monitoring-grafana
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/2/env/1/valueFrom/secretKeyRef/name
+        value: monitoring-grafana-overrides
+

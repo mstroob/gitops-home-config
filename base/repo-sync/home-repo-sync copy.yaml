@@ -1,0 +1,28 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: home-repo
+  namespace: argocd
+spec:
+  interval: 1m0s
+  ref:
+    branch: main
+  secretRef:
+    name: home-repo-credentials
+  url: https://github.com/mstroob/gitops-home-config.git
+
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: home-repo
+  namespace: argocd
+spec:
+  interval: 10m0s
+  path: ./clusters/home
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: home-repo
+  validation: client

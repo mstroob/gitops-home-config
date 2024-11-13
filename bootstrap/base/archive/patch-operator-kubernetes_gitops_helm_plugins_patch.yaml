@@ -1,0 +1,24 @@
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: Patch
+metadata:
+  name: argocd-operator-helm-plugins-patch
+  namespace: argocd
+spec:
+  serviceAccountRef:
+    name: patch-service-account
+  patches:
+    argocd-operator-helm-plugins-patch:
+      targetObjectRef:
+        apiVersion: argoproj.io/v1alpha1
+        kind: ArgoCD
+        name: argocd
+        namespace: argocd
+      patchTemplate: |
+        spec:
+          kustomizeBuildOptions: '--enable-alpha-plugins --enable-helm'
+      patchType: application/merge-patch+json
+      sourceObjectRefs:
+      - apiVersion: argoproj.io/v1alpha1
+        kind: ArgoCD
+        name: argocd
+        namespace: argocd

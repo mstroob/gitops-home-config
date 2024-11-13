@@ -1,0 +1,34 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: alertmanager-config
+  namespace: monitoring
+data:
+  config.yml: |-
+    global:
+        smtp_from: alertmanager@${CLUSTER_DOMAIN}
+        smtp_smarthost: smtp.sendgrid.net:587
+        smtp_auth_username: apikey
+        smtp_auth_password_file: /etc/alertmanager/secrets/api-token
+        smtp_require_tls: true
+
+    templates:
+    - '/etc/alertmanager/*.tmpl'
+    route:
+      receiver: alert-emailer
+      group_by: ['alertname', 'priority']
+      group_wait: 10s
+      repeat_interval: 30m
+      routes:
+        - receiver: alert-emailer
+          match:
+            severity: critical
+          group_wait: 10s
+          repeat_interval: 1h
+ 
+    receivers:
+    - name: alert-emailer
+      email_configs:
+      - to: ${EMAIL}
+        send_resolved: true
+

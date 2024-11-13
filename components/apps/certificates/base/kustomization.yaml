@@ -1,0 +1,21 @@
+resources:
+#- ../../../../settings/env-vars/base
+#- kubernetes-api-certificate.yaml
+#- ../../../../configs/instance-namespaces/default-namespace
+#- ../../../secrets/cloudflare-api-token
+- letsencrypt-cloudflare-dns-cluster-issuer.yaml
+# - wildcard-certificate.yaml
+#- instance-namespace.yaml
+#- patch-cluster-api-cert-job.yaml
+#- patch-cluster-wildcard-cert-job.yaml
+
+namespace: ingress-nginx
+
+# patches:
+#   - target: 
+#       kind: Namespace
+#       name: .*
+#     patch: |-
+#       - op: replace
+#         path: /metadata/name
+#         value: ingress-nginx

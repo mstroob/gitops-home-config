@@ -1,0 +1,31 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+helmCharts:
+  - name: cert-manager
+    version: v1.12.1
+    repo: https://charts.jetstack.io
+    valuesFile: values.yaml
+    namespace: cert-manager  
+    releaseName: cert-manager
+
+resources:
+- ../../../../configs/instance-namespaces/default-namespace
+- ../../../secrets/cloudflare-api-token
+
+
+patches:
+  - target: 
+      kind: Namespace
+      name: .*
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: cert-manager
+  - target: 
+      kind: Secret
+      name: cloudflare-api-token-secret
+    patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: cert-manager

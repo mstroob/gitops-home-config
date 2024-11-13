@@ -1,0 +1,11 @@
+controller:
+  service:
+    type: LoadBalancer
+    externalIPs: 10.0.4.110 
+    httpPort:
+      enable: false
+  # image:
+  #   ## Keep false as default for now!
+  #   chroot: false
+  #   registry: registry.k8s.io
+  #   image: ingress-nginx/controller

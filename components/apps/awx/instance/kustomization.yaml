@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: awx
+
+resources:
+  - awx.yaml
+  - ingress.yaml
+  - awx-deployment-patch.yaml
+  - patch-service-account.yaml
+
+generators:
+  - secret-generator.yaml
+
+
+
+# kubectl patch -n awx deployment awx-task --patch-file awx-deployment.yam
+# patchesStrategicMerge:
+#   - awx-deployment.yaml

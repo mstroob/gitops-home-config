@@ -1,0 +1,40 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: bitwarden
+
+
+
+helmCharts:
+  - name: app-template
+    repo: https://bjw-s.github.io/helm-charts/
+    version: 1.5.1
+    releaseName: &releaseName vaultwarden
+    namespace: &releaseNamespace bitwarden
+    valuesFile: values.yaml
+
+commonAnnotations:
+  meta.helm.sh/release-name: *releaseName
+  meta.helm.sh/release-namespace: *releaseNamespace
+
+commonLabels:
+  app.kubernetes.io/managed-by: Helm
+
+resources:
+  - ../../../../configs/instance-namespaces/default-namespace
+  - ../../../secrets/sendgrid-api-token
+patches:
+  - target: 
+      kind: Namespace
+      name: .*
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: bitwarden
+  - target: 
+      kind: PersistentVolumeClaim
+      name: vaultwarden-config
+    patch: |-
+      - op: replace
+        path: /spec/storageClassName
+        value: nfs-client

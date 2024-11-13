@@ -1,0 +1,8 @@
+
+resources:
+#- ../../../../settings/env-vars/base
+- ingress.yaml
+#- argocd-admin-user.yaml
+
+generators:
+  - secret-generator.yaml
